@@ -1,4 +1,7 @@
+import datetime
+
 from django.core.management.base import BaseCommand, CommandError
+from django.utils import timezone
 from faker import Faker
 
 from polls.models import Question
@@ -7,24 +10,26 @@ from polls.models import Question
 # имя файла является название команды
 class Command(BaseCommand):
 
-    # описание команды располагается в параметре help
-    help = 'Add new student(s) to the system'
+    # Description of the command will be placed in parameter 'help'
+    help = 'Add new question(s) to the system'
 
-    # все аргументы парсяться в этом методе
+    # We parse all arguments in this method
     def add_arguments(self, parser):
-
         parser.add_argument('-l', '--len', type=int, default=10)
 
-    # сама логика команды распологается здесь
+    # We put a logic of the command here
     def handle(self, *args, **options):
-        # для работы с Faker надо его заинициализировать
+        # Initialize Faker as object
         faker = Faker()
 
-        # для вывода информации о выполнении команды лучше использовать self.stdout.write вместо print
+        # We use self.stdout.write instead of print to make visual inference of the process
         self.stdout.write('Start generating Questions')
         for _ in range(options['len']):
             self.stdout.write('Generating Question {}'.format(_ + 1))
             question = Question()
-            # faker имеет большое количество разной генерируемой информации один из них name()
+            # Faker generates text for the questions. We may also give a list of designed
+            # questions to the Faker as parameter
             question.question_text = faker.text(max_nb_chars=50)
+            question.pub_date = timezone.now()
+            question.save()
         self.stdout.write('End generating Questions')
