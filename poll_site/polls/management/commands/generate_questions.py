@@ -29,7 +29,7 @@ class Command(BaseCommand):
             question = Question()
             # Faker generates text for the questions. We may also give a list of designed
             # questions to the Faker as parameter
-            question.question_text = faker.text(max_nb_chars=50)
+            question.question_text = faker.text(max_nb_chars=50)[:-1] + "?"
             question.pub_date = timezone.now()
             question.save()
         self.stdout.write('End generating Questions')
